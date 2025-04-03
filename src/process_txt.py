@@ -30,9 +30,17 @@ def extract_table_of_contents(file_path):
             if section_number:
                 last_section_number = section_number  # Store section number
             elif title and page_number:
-                # Prepend stored section number if available
-                formatted_entry = f"{last_section_number} {title}"
-                toc_entries[formatted_entry] = page_number
+                formatted_entry = f"{last_section_number} {title}"   # Format the entry
+                cleaned_section = str(last_section_number).replace('.', '')   # Ensure last_section_number is a string
+                if len(cleaned_section) == 1:
+                    toc_entries[formatted_entry] = {"page": page_number}
+                    previous_title = formatted_entry
+                elif len(cleaned_section) == 2:
+                    toc_entries[previous_title][formatted_entry] = {"page": page_number}
+                    previous_subtitle = formatted_entry
+                elif len(cleaned_section) == 3:  
+                    toc_entries[previous_title][previous_subtitle][formatted_entry] = {"page": page_number}
+
                 last_section_number = ""  # Reset after use
             
         elif len(line.strip()) == 0:  # Stop at an empty line (possible end of ToC)
